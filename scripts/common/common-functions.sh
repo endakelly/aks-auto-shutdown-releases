@@ -62,17 +62,6 @@ function is_in_date_range() {
   fi
 }
 
-#function should_stay_on_late() {
-  #local stay_on_late
-  #stay_on_late=$1
-
-  #if [[ $(is_late_night_run) == "true" && $stay_on_late == "Yes" ]]; then
-   # echo "true"
-  #else
-  #  echo "false"
- # fi
-#}
-
 function should_skip_start_stop () {
   local env business_area issue
   env=$1
@@ -80,7 +69,7 @@ function should_skip_start_stop () {
   mode=$3
   # If its not onDemand we don't need to check the file issues_list.json for startup
   if [[ $STARTUP_MODE != "onDemand" && $mode == "start" ]]; then
-    echo "false1"
+    echo "false"
     return
   fi
   while read issue; do
