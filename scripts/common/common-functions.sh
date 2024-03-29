@@ -96,7 +96,7 @@ function should_skip_start_stop () {
       continue
     fi
     if [[ $env_entry =~ $env && $business_area == $business_area_entry ]]; then 
-      if [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "false" ]] || [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "true" $(should_stay_on_late) == "true"]] ; then
+      if [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "false" ]] || [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "true" && $(should_stay_on_late) == "true"]] ; then
         if [[ $mode == "stop" ]]; then
           echo "true"
         else
