@@ -80,7 +80,7 @@ function should_skip_start_stop () {
   mode=$3
   # If its not onDemand we don't need to check the file issues_list.json for startup
   if [[ $STARTUP_MODE != "onDemand" && $mode == "start" ]]; then
-    echo "false"
+    echo "false1"
     return
   fi
   while read issue; do
@@ -101,18 +101,18 @@ function should_skip_start_stop () {
       elif [[ $(is_in_date_range $start_date $end_date) == "yes" && $(is_late_night_run) == "yes" && $stay_on_late == "Yes" ]]; then
         echo "true"
       else
-        echo "false"
+        echo "false2"
       fi
       return
     else
-      echo "false"
+      echo "false3"
     fi
   done < <(jq -c '.[]' issues_list.json)
 # If its onDemand and there are no issues matching above we should skip startup
   if [[ $STARTUP_MODE == "onDemand" && $mode == "start" ]]; then
     echo "true"
   else
-    echo "false"
+    echo "false4"
   fi
 }
 
