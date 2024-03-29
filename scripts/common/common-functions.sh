@@ -103,7 +103,6 @@ function should_skip_start_stop () {
       else
         echo "false2"
       fi
-      return
     else
       echo "false3"
     fi
