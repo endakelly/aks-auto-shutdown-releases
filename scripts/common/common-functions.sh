@@ -43,9 +43,9 @@ function convert_date_to_timestamp() {
 
 function is_late_night_run() {
   if [[ $(get_current_hour) -gt 20 ]]; then
-    echo "yes"
+    echo "true"
   else
-    echo "yes"
+    echo "true"
   fi
 }
 
@@ -56,9 +56,9 @@ function is_in_date_range() {
   current_date_seconds=$(get_current_date_seconds)
 
   if [[ $current_date_seconds -ge $start_date_seconds && $current_date_seconds -le $end_date_seconds ]]; then
-    echo "yes"
+    echo "true"
   else
-    echo "no"
+    echo "false"
   fi
 }
 
