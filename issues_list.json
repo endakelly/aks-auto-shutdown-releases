@@ -9,8 +9,7 @@
         ],
         "business_area": "cft",
         "change_jira_id": "jh-1",
-        "issue_link": "https://github.com/hmcts/aks-auto-shutdown-releases/issues/521",
-        "stay_on_late": "No"
+        "issue_link": "https://github.com/hmcts/aks-auto-shutdown-releases/issues/521"
     },
     {
         "start_date": "29-03-2024",

@@ -45,7 +45,7 @@ function is_late_night_run() {
   if [[ $(get_current_hour) -gt 20 ]]; then
     echo "true"
   else
-    echo "false"
+    echo "true"
   fi
 }
 
