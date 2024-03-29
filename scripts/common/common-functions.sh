@@ -24,6 +24,10 @@ function get_current_date() {
   $date_command +'%d-%m-%Y %H:%M'
 }
 
+function get_current_hour() {
+  $date_command +'%H'
+}
+
 function get_current_date_seconds() {
   local current_date_formatting
   current_date_formatting=$($date_command +'%Y-%m-%d')
@@ -35,6 +39,13 @@ function convert_date_to_timestamp() {
     local valid_date="$year-$month-$day"
     local timestamp=$($date_command -d "$valid_date" +%s)
     echo "$timestamp"
+}
+
+function is_late_night_run() {
+  if [[ $(get_current_hour) -gt 20 ]]; then
+    echo "true"
+  else
+    echo "false"
 }
 
 function is_in_date_range() {
@@ -51,12 +62,10 @@ function is_in_date_range() {
 }
 
 function should_stay_on_late() {
-  local stay_on_late current_hour
+  local stay_on_late
   stay_on_late=$1
-  current_hour=$("$date_command" +'%H')
 
-# Check if the current hour is greater than 22:00
-  if [[ $current_hour -ge 14 && $stay_on_late == "Yes" ]]; then
+  if [[ $(is_late_night_run) == "true" && $stay_on_late == "Yes" ]]; then
     echo "true"
   else
     echo "false"
@@ -86,13 +95,15 @@ function should_skip_start_stop () {
       continue
     fi
     if [[ $env_entry =~ $env && $business_area == $business_area_entry ]]; then 
-      if [[ $(is_in_date_range $start_date $end_date) == "true" && $(should_stay_on_late $stay_on_late) == "true" ]]; then
+      if [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "false" ]] || [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "true" $(should_stay_on_late) == "true"]] ; then
         if [[ $mode == "stop" ]]; then
           echo "true"
         else
           echo "false"
         fi
         return
+      else
+        echo "false"
       fi
     fi
   done < <(jq -c '.[]' issues_list.json)
