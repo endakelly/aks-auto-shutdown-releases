@@ -95,23 +95,22 @@ function should_skip_start_stop () {
     if [[ $request_type != $mode ]]; then
       continue
     fi
-    if [[ $env_entry =~ $env && $business_area == $business_area_entry && $mode == "stop" ]]; then 
-      if [[ $(is_in_date_range $start_date $end_date) == "yes" && $(is_late_night_run) == "no" ]]; then
-        echo "true1"
-      elif [[ $(is_in_date_range $start_date $end_date) == "yes" && $(is_late_night_run) == "yes" && $stay_on_late == "Yes" ]]; then
-        echo "true2"
-      else
-        echo "false2"
+    if [[ $env_entry =~ $env && $business_area == $business_area_entry ]]; then 
+      if [[ $(is_in_date_range $start_date $end_date) == "true" ]]; then
+        if [[ $mode == "stop" ]]; then
+          echo "true"
+        else
+          echo "false"
+        fi
+        return
       fi
-    else
-      echo "false3"
     fi
   done < <(jq -c '.[]' issues_list.json)
 # If its onDemand and there are no issues matching above we should skip startup
   if [[ $STARTUP_MODE == "onDemand" && $mode == "start" ]]; then
-    echo "true3"
+    echo "true"
   else
-    echo "false4"
+    echo "false"
   fi
 }
 
