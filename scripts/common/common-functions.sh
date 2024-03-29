@@ -62,16 +62,16 @@ function is_in_date_range() {
   fi
 }
 
-function should_stay_on_late() {
-  local stay_on_late
-  stay_on_late=$1
+#function should_stay_on_late() {
+  #local stay_on_late
+  #stay_on_late=$1
 
-  if [[ $(is_late_night_run) == "true" && $stay_on_late == "Yes" ]]; then
-    echo "true"
-  else
-    echo "false"
-  fi
-}
+  #if [[ $(is_late_night_run) == "true" && $stay_on_late == "Yes" ]]; then
+   # echo "true"
+  #else
+  #  echo "false"
+ # fi
+#}
 
 function should_skip_start_stop () {
   local env business_area issue
@@ -98,7 +98,7 @@ function should_skip_start_stop () {
     if [[ $mode == "stop" && $env_entry =~ $env && $business_area == $business_area_entry && $(is_in_date_range $start_date $end_date) == "true" ]]; then 
       if [[ $(is_late_night_run) == "false" ]]; then
         echo "true"
-      elif [[ $(is_late_night_run) == "true" && $(should_stay_on_late $stay_on_late) == "true" ]]; then
+      elif [[ $(is_late_night_run) == "true" && $stay_on_late == "Yes" ]]; then
         echo "true"
       else
         echo "false"
