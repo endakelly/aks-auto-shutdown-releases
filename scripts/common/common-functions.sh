@@ -95,7 +95,7 @@ function should_skip_start_stop () {
     if [[ $request_type != $mode ]]; then
       continue
     fi
-    if [[ $env_entry =~ $env && $business_area == $business_area_entry ]]; then 
+    if [[ $mode == "stop" && $env_entry =~ $env && $business_area == $business_area_entry ]]; then 
       if [[ $(is_in_date_range $start_date $end_date) == "true" ]]; then
         if [[ $mode == "stop" ]]; then
           echo "true"
