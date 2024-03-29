@@ -43,9 +43,9 @@ function convert_date_to_timestamp() {
 
 function is_late_night_run() {
   if [[ $(get_current_hour) -gt 20 ]]; then
-    echo "true"
+    echo "yes"
   else
-    echo "true"
+    echo "yes"
   fi
 }
 
@@ -56,9 +56,9 @@ function is_in_date_range() {
   current_date_seconds=$(get_current_date_seconds)
 
   if [[ $current_date_seconds -ge $start_date_seconds && $current_date_seconds -le $end_date_seconds ]]; then
-    echo "true"
+    echo "yes"
   else
-    echo "false"
+    echo "no"
   fi
 }
 
@@ -96,9 +96,9 @@ function should_skip_start_stop () {
       continue
     fi
     if [[ $env_entry =~ $env && $business_area == $business_area_entry && $mode == "stop" ]]; then 
-      if [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "false" ]]; then
+      if [[ $(is_in_date_range $start_date $end_date) == "yes" && $(is_late_night_run) == "no" ]]; then
         echo "true"
-      elif [[ $(is_in_date_range $start_date $end_date) == "true" && $(is_late_night_run) == "true" && $stay_on_late == "Yes" ]]; then
+      elif [[ $(is_in_date_range $start_date $end_date) == "yes" && $(is_late_night_run) == "yes" && $stay_on_late == "Yes" ]]; then
         echo "true"
       else
         echo "false"
