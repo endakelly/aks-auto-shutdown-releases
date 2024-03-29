@@ -46,6 +46,7 @@ function is_late_night_run() {
     echo "true"
   else
     echo "false"
+  fi
 }
 
 function is_in_date_range() {
