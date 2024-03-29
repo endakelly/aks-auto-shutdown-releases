@@ -99,7 +99,7 @@ function should_skip_start_stop () {
       if [[ $(is_in_date_range $start_date $end_date) == "true" ]]; then
         if [[ $(is_late_night_run) == "false" && $mode == "stop" ]]; then
           echo "true"
-        elif [[ $(is_late_night_run) == "true" && $(should_stay_on_late $stay_on_late) == "true" ]]
+        elif [[ $(is_late_night_run) == "true" && $(should_stay_on_late $stay_on_late) == "true" ]]; then
           echo "true"
         else
           echo "false"
@@ -107,7 +107,6 @@ function should_skip_start_stop () {
         return
       else
         echo "false"
-        fi
       fi
     fi
   done < <(jq -c '.[]' issues_list.json)
