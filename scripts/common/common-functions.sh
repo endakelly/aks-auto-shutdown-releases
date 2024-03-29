@@ -53,7 +53,7 @@ function is_in_date_range() {
 function should_stay_on_late() {
   local stay_on_late current_hour
   stay_on_late=$1
-  current_hour=$(date +'%H')
+  current_hour=$("$date_command" +'%H')
 
 # Check if the current hour is greater than 22:00
   if [[ $current_hour -ge 14 && $stay_on_late == "Yes" ]]; then
