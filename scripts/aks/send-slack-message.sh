@@ -14,7 +14,7 @@ jq --arg issue_url "$request_url_link" \
    --arg environment "$environment_field" \
    --arg start_date "$START_DATE" \
    --arg end_date "$END_DATE" \
-   --arg requester "$REQUESTER" \
+   --arg requester "@U055T225PPS" \
    --arg current_date "$current_date" \
    --arg cost_value "£$COST_DETAILS_FORMATTED" \
    --arg status "$APPROVAL_COMMENT" \
