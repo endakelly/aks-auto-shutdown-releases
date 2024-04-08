@@ -184,6 +184,7 @@ jobs:
         run: ./scripts/aks/send-slack-message.sh
         env:
           SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
+          SLACK_TOKEN: ${{ env.AUTO_SHUTDOWN_TEST_BOT_TOKEN }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           CHANGE_JIRA_ID: ${{ env.CHANGE_JIRA_ID }}
           REQUEST_URL: ${{ env.REQUEST_URL }}
@@ -326,6 +327,7 @@ jobs:
         run: ./scripts/aks/send-slack-message.sh
         env:
           SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
+          SLACK_TOKEN: ${{ env.AUTO_SHUTDOWN_TEST_BOT_TOKEN }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           CHANGE_JIRA_ID: ${{ env.CHANGE_JIRA_ID }}
           REQUEST_URL: ${{ env.REQUEST_URL }}
