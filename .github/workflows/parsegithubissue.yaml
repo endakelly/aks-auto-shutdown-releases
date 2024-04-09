@@ -134,9 +134,6 @@ jobs:
         if: env.PROCESS_SUCCESS != 'true'
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
           LABELS: error in form
 
     # Provide any error messages to user as a comment
@@ -220,9 +217,6 @@ jobs:
         if: env.ERROR_IN_COSTS == 'true'
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
           LABELS: cost error
 
     #Set approval_state environment var to auto-approved if cost value is less than £5,000
@@ -237,9 +231,6 @@ jobs:
         if: env.APPROVAL_STATE == 'auto-approved'
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
           LABELS: auto-approved
 
     #Add auto-approval comment if approval_state == auto-approved
@@ -256,9 +247,6 @@ jobs:
         if: env.APPROVAL_STATE == 'Pending Approval'
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
           LABELS: pending approval,very high cost
 
     #If approval_state == Pending Approval && workflow is running at submission time, not approval time.
