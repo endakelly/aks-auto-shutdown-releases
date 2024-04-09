@@ -37,18 +37,10 @@ jobs:
             Requester cannot also be approver - please seek a second approver.
 
     #Remove any approval labels if approver is equal to requester
-      - name: Remove approved label
-        if: contains(github.event.issue.labels.*.name, 'approved') && github.event.issue.user.login == github.actor || contains(github.event.issue.labels.*.name, 'auto-approved')
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            approved
-            auto-approved
+
 
     #End workflow if user is equal to requester
-      - name: exit flow if approver == requester 
-        if: contains(github.event.issue.labels.*.name, 'approved') && github.event.issue.user.login == github.actor || contains(github.event.issue.labels.*.name, 'auto-approved') && github.event.issue.user.login == github.actor
-        run: exit 1
+
 
     #if denied label is applied, set approval environment variables appropriately 
       - name: set denied status
