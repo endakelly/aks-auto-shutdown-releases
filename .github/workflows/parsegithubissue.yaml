@@ -272,8 +272,7 @@ jobs:
         if: contains(github.event.issue.labels.*.name, 'approved')
         run: ./scripts/aks/send-slack-message.sh
         env:
-          SLACK_TOKEN: ${{ secrets.AUTO_SHUTDOWN_OAUTH_TOKEN }}
-          APPROVER: ${{ github.actor }}
+          APPROVER_GITHUB_NAME: ${{ github.actor }}
 
 
     #If approved label is applied, set approval variables.
