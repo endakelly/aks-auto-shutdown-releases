@@ -21,8 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
-      with:
-        node-version: '20'
     #Adds label for user feedback
       - name: add processing label
         uses: actions-ecosystem/action-add-labels@v1
