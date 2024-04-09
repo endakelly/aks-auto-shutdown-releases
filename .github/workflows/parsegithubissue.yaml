@@ -63,23 +63,17 @@ jobs:
 
     #if approval state == denied, remove processing and pending approval labels
       - name: Remove labels
-        uses: actions-ecosystem/action-remove-labels@v1
         if: env.APPROVAL_STATE == 'Denied'
-        with:
-          labels: |
-            Processing
-            Pending approval
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: processing,pending approval
 
     #Remove labels from a previous run if present
       - name: Remove labels
         if: contains(github.event.issue.labels.*.name, 'Cost Error') || contains(github.event.issue.labels.*.name, 'Pending Approval') || contains(github.event.issue.labels.*.name, 'Success') || contains(github.event.issue.labels.*.name, 'Very high cost')
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            Cost Error
-            Pending approval
-            Success
-            Very high cost
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: cost error,pending approval,success,very high cost
 
     #Allows workflow to access repo
       - name: Checkout
@@ -123,11 +117,10 @@ jobs:
 
     # Remove label if present
       - name: Remove error labels
-        uses: actions-ecosystem/action-remove-labels@v1
         if: env.PROCESS_SUCCESS == 'true' && contains(github.event.issue.labels.*.name, 'Error in form')
-        with:
-          labels: |
-            Error in form
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: error in form
 
     # Add form error label if process_success not equal to true
       - name: Add error label
@@ -297,18 +290,16 @@ jobs:
 
     #Remove processing label
       - name: Remove processing label
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            Processing
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: processing
 
     #Remove pending approval label if approved
       - name: Remove processing label
         if: env.APPROVAL_STATE == 'Approved'
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            Pending approval
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: pending approval
     
     #Close issue if approved
       - name: Close Issue with success
