@@ -4,7 +4,7 @@
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "*<https://github.com/hmcts/aks-auto-shutdown-releases/issues/672|>*"
+        "text": "*<https://github.com/hmcts/aks-auto-shutdown-releases/issues/682|>*"
       }
     },
     {
@@ -20,11 +20,11 @@
         },
         {
           "type": "mrkdwn",
-          "text": "*Start Date:*\n01-02-2025"
+          "text": "*Start Date:*\n09-04-2024"
         },
         {
           "type": "mrkdwn",
-          "text": "*End Date:*\n25-02-2025"
+          "text": "*End Date:*\n17-04-2024"
         },
         {
           "type": "mrkdwn",
@@ -32,11 +32,11 @@
         },
         {
           "type": "mrkdwn",
-          "text": "*Submitted:*\n09-04-2024 15:28"
+          "text": "*Submitted:*\n09-04-2024 16:56"
         },
         {
           "type": "mrkdwn",
-          "text": "*Value:*\n£69,359.25"
+          "text": "*Value:*\n£7,847.88"
         },
         {
           "type": "mrkdwn",
@@ -54,7 +54,7 @@
             "text": "Review Request"
           },
           "style": "primary",
-          "url": "https://github.com/hmcts/aks-auto-shutdown-releases/issues/672"
+          "url": "https://github.com/hmcts/aks-auto-shutdown-releases/issues/682"
         }
       ]
     }
