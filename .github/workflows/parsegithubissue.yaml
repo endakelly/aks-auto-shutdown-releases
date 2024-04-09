@@ -267,12 +267,21 @@ jobs:
           body: |
             Due to the level of cost associated with this request, an approval will be required from any additional person. Note, you cannot approve your own request.
 
-    #If approved label is applued, set approval variables.
+    #If approved label is applied, get approver slack name from GitHub username.
+      - name: Get Approver slack name
+        if: contains(github.event.issue.labels.*.name, 'approved')
+        run: ./scripts/aks/send-slack-message.sh
+        env:
+          SLACK_TOKEN: ${{ secrets.AUTO_SHUTDOWN_OAUTH_TOKEN }}
+          APPROVER: ${{ github.actor }}
+
+
+    #If approved label is applied, set approval variables.
       - name: set approved status
         if: contains(github.event.issue.labels.*.name, 'approved')
         run: |
           echo "APPROVAL_STATE=Approved" >> $GITHUB_ENV
-          echo "APPROVAL_COMMENT=Approved by ${{ github.actor }}" >> $GITHUB_ENV
+          echo "APPROVAL_COMMENT=Approved by ${{ env.APPROVER_SLACK_NAME }}" >> $GITHUB_ENV
 
     #Add approval comment if approval_state == Approved
       - name: Add auto approval comment
