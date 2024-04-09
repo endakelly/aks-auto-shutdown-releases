@@ -13,6 +13,8 @@ env:
   APPROVAL_STATE: "Pending Approval"
   APPROVAL_COMMENT: "Pending Approval"
   SLACK_TOKEN: ${{ secrets.AUTO_SHUTDOWN_OAUTH_TOKEN }}
+  GH_REPO: ${{ github.repository }}
+  NUMBER: ${{ github.event.issue.number }}
 permissions:
   id-token: write
 jobs:
@@ -24,9 +26,6 @@ jobs:
       - name: Add label processing
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
           LABELS: processing
 
     #Comment if approver is equal to requester
