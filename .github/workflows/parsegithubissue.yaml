@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
-      - run: gh issue edit "$NUMBER" --add-label "$LABELS"
+      - name: Add label processing
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
@@ -132,9 +133,12 @@ jobs:
     # Add form error label if process_success not equal to true
       - name: Add error label
         if: env.PROCESS_SUCCESS != 'true'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: "Error in form"
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          LABELS: error in form
 
     # Provide any error messages to user as a comment
       - name: Create Issue Comment
@@ -215,9 +219,12 @@ jobs:
       #If cost calculator finds an error, add cost error label
       - name: Add costs error label
         if: env.ERROR_IN_COSTS == 'true'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: "Cost Error"
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          LABELS: cost error
 
     #Set approval_state environment var to auto-approved if cost value is less than £5,000
       - name: set approved status
@@ -229,9 +236,12 @@ jobs:
     #Add auto approved label if approval_state == auto-approved
       - name: Add auto-approved label
         if: env.APPROVAL_STATE == 'auto-approved'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: "auto-approved"
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          LABELS: auto-approved
 
     #Add auto-approval comment if approval_state == auto-approved
       - name: Add auto approval comment
@@ -245,11 +255,12 @@ jobs:
     #If approval_state == Pending Approval add appropriate labels
       - name: Add very high cost label
         if: env.APPROVAL_STATE == 'Pending Approval'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: |
-            Pending approval
-            Very high cost
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          LABELS: pending approval, very high cost
 
     #If approval_state == Pending Approval && workflow is running at submission time, not approval time.
       - name: Very High Cost approval comment
