@@ -58,5 +58,23 @@
         "change_jira_id": "DTSPO-0001",
         "stay_on_late": "No",
         "issue_link": "https://github.com/hmcts/aks-auto-shutdown-releases/issues/666"
+    },
+    {
+        "start_date": "21-06-2024",
+        "end_date": "21-07-2024",
+        "request_type": "stop",
+        "environment": [
+            "Sandbox",
+            "AAT / Staging",
+            "Preview / Dev",
+            "Test / Perftest",
+            "Demo",
+            "ITHC",
+            "PTL"
+        ],
+        "business_area": "cft",
+        "change_jira_id": "DTSPO-0002",
+        "stay_on_late": "Yes",
+        "issue_link": "https://github.com/hmcts/aks-auto-shutdown-releases/issues/668"
     }
 ]
