@@ -26,7 +26,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           NUMBER: ${{ github.event.issue.number }}
-          LABELS: processing
+          LABELS: processing-123
 
     #Comment if approver is equal to requester
       - name: Cannot self approve comment
