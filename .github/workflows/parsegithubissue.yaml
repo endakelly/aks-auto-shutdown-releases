@@ -7,9 +7,6 @@ on:
       - edited
       - labeled
   pull_request:
-    types: 
-      - opened
-      - edited
   workflow_dispatch:
 env:
   GH_TOKEN: ${{ secrets.PLATFORM_USER_TOKEN }}
