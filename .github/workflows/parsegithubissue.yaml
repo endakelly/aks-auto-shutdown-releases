@@ -20,6 +20,20 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
+
+    #Check if the "cancel" label is added
+      - name: Check for cancel label
+        if: contains(github.event.issue.labels.*.name, 'cancel') && github.event.action == 'labeled'
+        run: |
+          # Logic to remove entry from issues_list.json
+          python ./scripts/remove_entry.py ${{ github.event.issue.number }}
+          # Exit the workflow
+          exit 0
+
+    #End the workflow if the cancel label is applied
+      - name: Exit workflow if canceled
+        if: contains(github.event.issue.labels.*.name, 'cancel') && github.event.action == 'labeled'
+        run: exit 0
     #Adds label for user feedback
       - name: add processing label
         uses: actions-ecosystem/action-add-labels@v1
