@@ -29,8 +29,17 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
+    
+      - name: Check if pull request is linked
+        id: check_if_linked
+        if: github.event.issue.number == ''
+        run: |
+          echo "NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
 
-    #Check if the "cancel" label is added
+      - name: Check the number
+        run: echo "The number is $NUMBER"
+        
+     #Check if the "cancel" label is added
       - name: Check for cancel label
         if: contains(github.event.issue.labels.*.name, 'cancel') && github.event.action == 'labeled'
         run: |
@@ -38,7 +47,7 @@ jobs:
           python ./scripts/remove_entry.py ${{ github.event.issue.number }}
           # Exit the workflow
           exit 0
-    
+        
       - name: Add label processing
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
