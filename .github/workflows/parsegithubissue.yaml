@@ -34,7 +34,18 @@ jobs:
         id: check_if_linked
         if: github.event.issue.number == ''
         run: |
-          echo "NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+          echo "NUMBER=$(gh api graphql -F query='
+          query {
+            repository(owner: "endakelly", name: "aks-auto-shutdown-releases") {
+              pullRequest(number: ${{ github.event.pull_request.number }}) {
+                closingIssuesReferences(first: 1) {
+                  nodes {
+                      number
+                  }
+                }
+              }
+            }
+          }' | jq -r '.data.repository.pullRequest.closingIssuesReferences.nodes[].number') >> $GITHUB_ENV
 
       - name: Check the number
         run: echo "The number is $NUMBER"
