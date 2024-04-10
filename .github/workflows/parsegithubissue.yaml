@@ -7,11 +7,6 @@ on:
       - edited
       - labeled
   pull_request:
-    types:
-      - opened
-      - edited
-      - synchronize
-      - labeled
   workflow_dispatch:
 env:
   GH_TOKEN: ${{ secrets.PLATFORM_USER_TOKEN }}
@@ -29,6 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
+      - name: Check if pull request is linked
+        id: check_if_linked
+        if: github.event.issue.number == ''
+        run: |
+          echo "NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+
+      - name: Check the number
+        run: echo "The number is $NUMBER"
+        
       - name: Add label processing
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
