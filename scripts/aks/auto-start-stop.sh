@@ -32,6 +32,7 @@ jq -c '.[]' <<< $SUBSCRIPTIONS | while read subscription; do
       #echo az aks $MODE --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --no-wait || echo Ignoring any errors while $MODE operation on cluster
       if [[ $DRYRUN != "true" ]]; then
         #az aks $MODE --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --no-wait || echo Ignoring any errors while $MODE operation on cluster
+        echo "shutting down cluster $CLUSTER_NAME (rg:$RESOURCE_GROUP)"
       fi
     else
       echo -e "${AMBER}cluster $CLUSTER_NAME (rg:$RESOURCE_GROUP) has been skipped from today's $MODE operation schedule"

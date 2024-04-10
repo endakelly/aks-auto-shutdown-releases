@@ -12,6 +12,9 @@ env:
   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   APPROVAL_STATE: "Pending Approval"
   APPROVAL_COMMENT: "Pending Approval"
+  SLACK_TOKEN: ${{ secrets.AUTO_SHUTDOWN_OAUTH_TOKEN }}
+  GH_REPO: ${{ github.repository }}
+  NUMBER: ${{ github.event.issue.number }}
 permissions:
   id-token: write
 jobs:
@@ -20,44 +23,25 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
-
-    #Check if the "cancel" label is added
-      - name: Check for cancel label
-        if: contains(github.event.issue.labels.*.name, 'cancel') && github.event.action == 'labeled'
-        run: |
-          # Logic to remove entry from issues_list.json
-          python ./scripts/remove_entry.py ${{ github.event.issue.number }}
-          # Exit the workflow
-          exit 0
-
-    #Adds label for user feedback
-      - name: add processing label
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: "Processing"
+      - name: Add label processing
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          LABELS: processing
 
     #Comment if approver is equal to requester
       - name: Cannot self approve comment
         if: contains(github.event.issue.labels.*.name, 'approved') && github.event.issue.user.login == github.actor || contains(github.event.issue.labels.*.name, 'auto-approved') && github.event.issue.user.login == github.actor
-        uses: peter-evans/create-or-update-comment@v3.1.0
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
             Requester cannot also be approver - please seek a second approver.
 
     #Remove any approval labels if approver is equal to requester
-      - name: Remove approved label
-        if: contains(github.event.issue.labels.*.name, 'approved') && github.event.issue.user.login == github.actor || contains(github.event.issue.labels.*.name, 'auto-approved')
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            approved
-            auto-approved
+
 
     #End workflow if user is equal to requester
-      - name: exit flow if approver == requester 
-        if: contains(github.event.issue.labels.*.name, 'approved') && github.event.issue.user.login == github.actor || contains(github.event.issue.labels.*.name, 'auto-approved') && github.event.issue.user.login == github.actor
-        run: exit 1
+
 
     #if denied label is applied, set approval environment variables appropriately 
       - name: set denied status
@@ -79,23 +63,17 @@ jobs:
 
     #if approval state == denied, remove processing and pending approval labels
       - name: Remove labels
-        uses: actions-ecosystem/action-remove-labels@v1
         if: env.APPROVAL_STATE == 'Denied'
-        with:
-          labels: |
-            Processing
-            Pending approval
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: processing,pending approval
 
     #Remove labels from a previous run if present
       - name: Remove labels
         if: contains(github.event.issue.labels.*.name, 'Cost Error') || contains(github.event.issue.labels.*.name, 'Pending Approval') || contains(github.event.issue.labels.*.name, 'Success') || contains(github.event.issue.labels.*.name, 'Very high cost')
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            Cost Error
-            Pending approval
-            Success
-            Very high cost
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: cost error,pending approval,success,very high cost
 
     #Allows workflow to access repo
       - name: Checkout
@@ -139,23 +117,22 @@ jobs:
 
     # Remove label if present
       - name: Remove error labels
-        uses: actions-ecosystem/action-remove-labels@v1
         if: env.PROCESS_SUCCESS == 'true' && contains(github.event.issue.labels.*.name, 'Error in form')
-        with:
-          labels: |
-            Error in form
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: error in form
 
     # Add form error label if process_success not equal to true
       - name: Add error label
         if: env.PROCESS_SUCCESS != 'true'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: "Error in form"
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          LABELS: error in form
 
     # Provide any error messages to user as a comment
       - name: Create Issue Comment
         if: env.PROCESS_SUCCESS != 'true'
-        uses: peter-evans/create-or-update-comment@v3.1.0
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
@@ -169,7 +146,7 @@ jobs:
 
     # Login to Azure CLI (for cost analysis)
       - name: 'Az CLI login'
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: 2b6fa9d7-7dba-4600-a58a-5e25554997aa # DTS AKS Auto-Shutdown
           tenant-id: 531ff96d-0ae9-462a-8d2d-bec7c0b42082 # HMCTS.NET
@@ -213,7 +190,7 @@ jobs:
     #Add output of cost calculator as a comment to user
       - name: Add cost details as a comment
         if: env.PROCESS_SUCCESS == 'true' && env.ERROR_IN_COSTS != 'true'
-        uses: peter-evans/create-or-update-comment@v3.1.0
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
@@ -222,7 +199,7 @@ jobs:
     #If cost calculator fails, provide feedback to user as a comment
       - name: Add cost error details as a comment
         if: env.PROCESS_SUCCESS == 'true' && env.ERROR_IN_COSTS == 'true'
-        uses: peter-evans/create-or-update-comment@v3.1.0
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
@@ -231,9 +208,9 @@ jobs:
       #If cost calculator finds an error, add cost error label
       - name: Add costs error label
         if: env.ERROR_IN_COSTS == 'true'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: "Cost Error"
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          LABELS: cost error
 
     #Set approval_state environment var to auto-approved if cost value is less than £5,000
       - name: set approved status
@@ -245,14 +222,14 @@ jobs:
     #Add auto approved label if approval_state == auto-approved
       - name: Add auto-approved label
         if: env.APPROVAL_STATE == 'auto-approved'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: "auto-approved"
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          LABELS: auto-approved
 
     #Add auto-approval comment if approval_state == auto-approved
       - name: Add auto approval comment
         if: env.APPROVAL_STATE == 'auto-approved'
-        uses: peter-evans/create-or-update-comment@v3.1.0
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
@@ -261,32 +238,38 @@ jobs:
     #If approval_state == Pending Approval add appropriate labels
       - name: Add very high cost label
         if: env.APPROVAL_STATE == 'Pending Approval'
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          labels: |
-            Pending approval
-            Very high cost
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"
+        env:
+          LABELS: pending approval,very high cost
 
     #If approval_state == Pending Approval && workflow is running at submission time, not approval time.
       - name: Very High Cost approval comment
         if: env.APPROVAL_STATE == 'Pending Approval' && github.event.issue.user.login == github.actor
-        uses: peter-evans/create-or-update-comment@v3.1.0
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
             Due to the level of cost associated with this request, an approval will be required from any additional person. Note, you cannot approve your own request.
 
-    #If approved label is applued, set approval variables.
+    #If approved label is applied, get approver slack name from GitHub username.
+      - name: Get Approver slack name
+        if: contains(github.event.issue.labels.*.name, 'approved')
+        run: ./scripts/aks/send-slack-message.sh
+        env:
+          APPROVER_GITHUB_NAME: ${{ github.actor }}
+
+
+    #If approved label is applied, set approval variables.
       - name: set approved status
         if: contains(github.event.issue.labels.*.name, 'approved')
         run: |
           echo "APPROVAL_STATE=Approved" >> $GITHUB_ENV
-          echo "APPROVAL_COMMENT=Approved by ${{ github.actor }}" >> $GITHUB_ENV
+          echo "APPROVAL_COMMENT=Approved by ${{ env.APPROVER_SLACK_NAME }}" >> $GITHUB_ENV
 
     #Add approval comment if approval_state == Approved
       - name: Add auto approval comment
         if: env.APPROVAL_STATE == 'Approved'
-        uses: peter-evans/create-or-update-comment@v3.1.0
+        uses: peter-evans/create-or-update-comment@v4.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
@@ -307,18 +290,16 @@ jobs:
 
     #Remove processing label
       - name: Remove processing label
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            Processing
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: processing
 
     #Remove pending approval label if approved
       - name: Remove processing label
         if: env.APPROVAL_STATE == 'Approved'
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: |
-            Pending approval
+        run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+        env:
+          LABELS: pending approval
     
     #Close issue if approved
       - name: Close Issue with success
