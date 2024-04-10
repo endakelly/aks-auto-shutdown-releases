@@ -28,7 +28,7 @@ jobs:
         id: check_if_linked
         if: github.event.issue.number == ''
         run: |
-          echo "NUMBER=${{ github.event.pull_request.closingIssuesReferences }}" >> $GITHUB_ENV
+          echo "NUMBER=${{ github.event.pull_request.closingIssuesReferences(first: 1) }}" >> $GITHUB_ENV
 
       - name: Check the number
         run: echo "The number is $NUMBER"
