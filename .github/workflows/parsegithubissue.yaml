@@ -1,6 +1,6 @@
 name: Auto Parse github form
 run-name: >-
-  ${{ github.event.repository.name == 'ci-systems'
+  ${{ github.event.repository.name == 'aks-auto-shutdown-releases'
     && format('My Regression tests: drv:{0} + ci-systems:{1}',
               inputs.my_version,
               github.head_ref || github.ref_name)
