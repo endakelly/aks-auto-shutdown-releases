@@ -1,5 +1,5 @@
 name: Auto Parse github form
-run-name: ${{ github.actor }} - issue:${{ github.event.issue.number }}
+run-name: ${{ github.actor }} - issue:$NUMBER
 on:
   issues:
     types:
@@ -20,7 +20,6 @@ env:
   APPROVAL_COMMENT: "Pending Approval"
   SLACK_TOKEN: ${{ secrets.AUTO_SHUTDOWN_OAUTH_TOKEN }}
   GH_REPO: ${{ github.repository }}
-  NUMBER: ${{ github.event.issue.number }}
 permissions:
   id-token: write
 jobs:
@@ -46,6 +45,12 @@ jobs:
               }
             }
           }' | jq -r '.data.repository.pullRequest.closingIssuesReferences.nodes[].number') >> $GITHUB_ENV
+
+      - name: Check if this is just an issue
+        id: check_if_issue
+        if: github.event.issue.number != ''
+        run: |
+          echo "NUMBER=${{ github.event.issue.number }}" >> $GITHUB_ENV
 
       - name: Check the number
         run: echo "The number is $NUMBER"
