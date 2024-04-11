@@ -1,9 +1,5 @@
 name: Auto Parse github form
-run-name: >-
-  if ${{ github.event_name == 'pull_request' }}; then
-    ${{ github.actor }} - PR #${{ github.event.pull_request.number }}
-  else
-    ${{ github.actor }} - Issue #${{ github.event.issue.number }}
+run-name: ${{ github.event_name == 'pull_request' && format('PR #{0} - {1}', github.event.pull_request.number) || format(github.event.issue.number) }}
 on:
   issues:
     types:
