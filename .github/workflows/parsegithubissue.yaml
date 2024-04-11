@@ -138,7 +138,7 @@ jobs:
           echo '${{ steps.parse_issue.outputs.payload }}'
           echo NEW_DATA='${{ steps.parse_issue.outputs.payload }}' >> $GITHUB_ENV
           echo GITHUB_REPO='${{ github.repository }}' >> $GITHUB_ENV
-          echo ISSUE_NUMBER='$NUMBER' >> $GITHUB_ENV
+          echo ISSUE_NUMBER=$NUMBER >> $GITHUB_ENV
 
     #Setup Python
       - uses: actions/setup-python@v5
