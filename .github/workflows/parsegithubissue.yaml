@@ -74,7 +74,7 @@ jobs:
         if: contains(github.event.issue.labels.*.name, 'approved') && github.event.issue.user.login == github.actor || contains(github.event.issue.labels.*.name, 'auto-approved') && github.event.issue.user.login == github.actor
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           body: |
             Requester cannot also be approver - please seek a second approver.
 
@@ -97,7 +97,7 @@ jobs:
         if: env.APPROVAL_STATE == 'Denied'
         uses: peter-evans/close-issue@v3
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           comment: | 
             Your request has been denied by ${{ github.actor }}, most likely due to associated costs being too high.
             Closing issue.
@@ -128,7 +128,7 @@ jobs:
         id: parse_issue
         uses: onmax/issue-form-parser@v1.4
         with:
-          issue_number: $NUMBER
+          issue_number: ${{ env.NUMBER }}
 
     #Save parsed date into environment variables  
       - name: Save parsed payload data
@@ -175,7 +175,7 @@ jobs:
         if: env.PROCESS_SUCCESS != 'true'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           body: |
             ${{ env.ISSUE_COMMENT }}
             Please edit this issue and select "Update comment" to resubmit.
@@ -233,7 +233,7 @@ jobs:
         if: env.PROCESS_SUCCESS == 'true' && env.ERROR_IN_COSTS != 'true'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           body: |
             Total estimated cost of skipping shutdown for the provided dates is **£${{ env.COST_DETAILS_FORMATTED }}**
 
@@ -242,7 +242,7 @@ jobs:
         if: env.PROCESS_SUCCESS == 'true' && env.ERROR_IN_COSTS == 'true'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           body: |
             We have been unable to estimate the cost of this skip request.
 
@@ -272,7 +272,7 @@ jobs:
         if: env.APPROVAL_STATE == 'auto-approved'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           body: |
             You request has been automatically approved.
 
@@ -288,7 +288,7 @@ jobs:
         if: env.APPROVAL_STATE == 'Pending Approval' && github.event.issue.user.login == github.actor
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           body: |
             Due to the level of cost associated with this request, an approval will be required from any additional person. Note, you cannot approve your own request.
 
@@ -312,7 +312,7 @@ jobs:
         if: env.APPROVAL_STATE == 'Approved'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           body: |
             ${{ env.APPROVAL_COMMENT }}
 
@@ -347,7 +347,7 @@ jobs:
         if: env.PROCESS_SUCCESS == 'true' && env.APPROVAL_STATE == 'Approved' || env.PROCESS_SUCCESS == 'true' && env.APPROVAL_STATE == 'auto-approved'
         uses: peter-evans/close-issue@v3
         with:
-          issue-number: $NUMBER
+          issue-number: ${{ env.NUMBER }}
           comment: | 
             Success! Your [commit](${{ env.COMMIT_URL }}) has been added to the json exclusions file.
             Auto-closing issue.
