@@ -1,8 +1,8 @@
 name: Auto Parse github form
 run-name: >-
   ${{ github.event.pull_request.number }} == ''
-    && ${{ github.actor }} - pull request:${{ github.event.pull_request.number }}'
-    || ${{ github.actor }} - issue:${{ github.event.issue.number }}'
+    && format('${{ github.actor }} - pull request:${{ github.event.pull_request.number }}')
+    || format('${{ github.actor }} - issue:${{ github.event.issue.number }}') }}
 on:
   issues:
     types:
