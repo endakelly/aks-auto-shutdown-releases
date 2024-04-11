@@ -1,6 +1,6 @@
 name: Auto Parse github form
 run-name: >-
-  if [[ ${{ github.event.pull_request.number == '' }} ]]; then
+  if [[ ${{ github.event.pull_request.number }} == '' ]]; then
     "${{ github.actor }} - issue:${{ github.event.issue.number }}"
   else
     "${{ github.actor }} - pull request:${{ github.event.pull_request.number }}"
