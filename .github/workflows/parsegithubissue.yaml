@@ -1,10 +1,8 @@
 name: Auto Parse github form
 run-name: >-
-  ${{ github.event.repository.name == 'aks-auto-shutdown-releases'
-    && format('My Regression tests: drv:{0} + ci-systems:{1}',
-              inputs.my_version,
-              github.head_ref || github.ref_name)
-    || format('My Regression tests: {0}', inputs.my_version) }}
+  ${{ github.event.pull_request.number }} == ''
+    && ${{ github.actor }} - pull request:${{ github.event.pull_request.number }}'
+    || ${{ github.actor }} - issue:${{ github.event.issue.number }}'
 on:
   issues:
     types:
