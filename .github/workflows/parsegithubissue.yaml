@@ -1,5 +1,5 @@
 name: Auto Parse github form
-run-name: ${{ github.event_name == 'pull_request' && format('PR #{0} - {1}', github.event.pull_request.number) || format('My Regression tests') }}
+run-name: ${{ github.event_name == 'pull_request' && format('PR #{0}', github.event.pull_request.number) || 'My Regression tests' }}
 on:
   issues:
     types:
