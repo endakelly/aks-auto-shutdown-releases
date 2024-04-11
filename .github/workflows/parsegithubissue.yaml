@@ -1,9 +1,10 @@
 name: Auto Parse github form
 run-name: >-
-  if ${{ github.event.repository.name }} == 'ci-systems'; then
-    My Regression tests: ${{ inputs.my_version }} + ci-systems: ${{ github.head_ref || github.ref_name }}
-  else
-    My Regression tests: ${{ inputs.my_version }}
+  ${{ github.event.repository.name == 'ci-systems'
+    && format('My Regression tests: drv:{0} + ci-systems:{1}',
+              inputs.my_version,
+              github.head_ref || github.ref_name)
+    || format('My Regression tests: {0}', inputs.my_version) }}
 on:
   issues:
     types:
