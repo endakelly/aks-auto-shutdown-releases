@@ -1,5 +1,5 @@
 name: Auto Parse github form
-run-name: ${{ github.actor }} - issue:$NUMBER
+run-name: ${{ github.actor }} - issue:${{ github.event.issue.number }}
 on:
   issues:
     types:
