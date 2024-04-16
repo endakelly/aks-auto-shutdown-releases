@@ -71,8 +71,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: "processing"
-          token: ${{ env.GH_TOKEN }}
+          label: processing
 
     #Comment if approver is equal to requester
       - name: Cannot self approve comment

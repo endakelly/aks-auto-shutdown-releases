@@ -18,7 +18,7 @@ runs:
         gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
       shell: bash
       env:
-        LABELS: ${{ inputs.label }}
+        LABEL: ${{ inputs.label }}
         NUMBER: ${{ inputs.issue }}
         GH_TOKEN: ${{ inputs.token }}
         
