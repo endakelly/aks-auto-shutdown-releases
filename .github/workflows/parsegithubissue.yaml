@@ -1,5 +1,5 @@
 name: Auto Parse github form
-run-name: ${{ github.event_name }} == 'pull_request' && format('PR #{0}', github.event.pull_request.number) || 'My Regression tests'
+run-name: My PR run
 on:
   issues:
     types:
@@ -53,6 +53,13 @@ jobs:
           # Exit the workflow
           exit 0
         
+    #Allows workflow to access repo
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+          token: ${{ env.GH_TOKEN }}
+
       - uses: ./.github/reusable-workflows/add-label.yaml
         with:
           issue: ${{ github.event.issue.number }}
@@ -104,13 +111,6 @@ jobs:
         run: gh issue edit "$NUMBER" --remove-label "$LABELS"
         env:
           LABELS: cost error,pending approval,success,very high cost
-
-    #Allows workflow to access repo
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: '0'
-          token: ${{ env.GH_TOKEN }}
 
     #Parse issue form that trigger workflow
       - name: Read submitted issue
