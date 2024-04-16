@@ -18,5 +18,5 @@ runs:
       env:
         LABELS: ${{ inputs.label }}
         NUMBER: ${{ inputs.issue }}
-        GH_TOKEN: ${{ input.token }} 
+        GH_TOKEN: ${{ inputs.token }} 
         
