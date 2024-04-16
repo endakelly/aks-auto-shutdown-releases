@@ -15,7 +15,7 @@ runs:
     - name: Add label $LABEL
       run: |
         echo "Labels are $LABELS"
-        for LABEL in $LABELS; do
+        for LABEL in "${LABELS[@]}"; do
           echo "Label is $LABEL"
           gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
         done
