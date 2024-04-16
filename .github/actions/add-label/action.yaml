@@ -21,9 +21,9 @@ runs:
       run: |
         echo "author is $AUTHOR"
       shell: bash
-      
+
     - name: Add label $LABEL
-      run: gh issue edit --repo "$GH_REPO" "$NUMBER" --add-label "$LABEL"
+      run: gh issue edit --repo endakelly/aks-auto-shutdown-releases 4 --add-label processing
       shell: bash
       env:
         LABELS: ${{ inputs.label }}
