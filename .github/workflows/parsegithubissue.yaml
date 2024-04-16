@@ -23,12 +23,6 @@ env:
 permissions:
   id-token: write
 jobs:
-  add-label:
-    runs-on: ubuntu-latest
-    uses: ./.github/workflows/add-label.yaml
-    with:
-      issue: ${{ github.event.issue.number }}
-      label: 'processing'
   process-request:
     permissions: write-all
     runs-on: ubuntu-latest
@@ -65,6 +59,11 @@ jobs:
         with:
           fetch-depth: '0'
           token: ${{ env.GH_TOKEN }}
+
+      - uses: ./.github/workflows/add-label
+        with:
+          issue: ${{ github.event.issue.number }}
+          label: 'processing'
 
     #Comment if approver is equal to requester
       - name: Cannot self approve comment
