@@ -63,7 +63,9 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: processing,bug
+          label: |
+            processing
+            bug
           token: ${{ env.GH_TOKEN }}
 
     #Comment if approver is equal to requester
@@ -240,7 +242,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: "cost error"
+          label: cost error
           token: ${{ env.GH_TOKEN }}
 
     #Set approval_state environment var to auto-approved if cost value is less than £5,000
