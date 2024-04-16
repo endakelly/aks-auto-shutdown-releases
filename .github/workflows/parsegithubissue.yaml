@@ -157,7 +157,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: error in form
+          label: 'error in form'
           token: ${{ env.GH_TOKEN }}
 
     # Provide any error messages to user as a comment
@@ -175,43 +175,43 @@ jobs:
         if: env.PROCESS_SUCCESS != 'true'
         run: exit 1
 
-    # Login to Azure CLI (for cost analysis)
-      - name: 'Az CLI login'
-        uses: azure/login@v2
-        with:
-          client-id: 2b6fa9d7-7dba-4600-a58a-5e25554997aa # DTS AKS Auto-Shutdown
-          tenant-id: 531ff96d-0ae9-462a-8d2d-bec7c0b42082 # HMCTS.NET
-          allow-no-subscriptions: true
+    # # Login to Azure CLI (for cost analysis)
+    #   - name: 'Az CLI login'
+    #     uses: azure/login@v2
+    #     with:
+    #       client-id: 2b6fa9d7-7dba-4600-a58a-5e25554997aa # DTS AKS Auto-Shutdown
+    #       tenant-id: 531ff96d-0ae9-462a-8d2d-bec7c0b42082 # HMCTS.NET
+    #       allow-no-subscriptions: true
 
-    #Run bash script to get Azure resouce details for cost analysis
-      - name: get aks resource details
-        if: env.PROCESS_SUCCESS == 'true'
-        continue-on-error: true
-        run: ./scripts/aks/resource-details.sh
+    # #Run bash script to get Azure resouce details for cost analysis
+    #   - name: get aks resource details
+    #     if: env.PROCESS_SUCCESS == 'true'
+    #     continue-on-error: true
+    #     run: ./scripts/aks/resource-details.sh
 
-    #Run cost calculator python script
-      - name: process costs
-        if: env.PROCESS_SUCCESS == 'true'
-        continue-on-error: true
-        run: |
-          python ./scripts/cost-calculator.py || echo "Calculating cost failed"
+    # #Run cost calculator python script
+    #   - name: process costs
+    #     if: env.PROCESS_SUCCESS == 'true'
+    #     continue-on-error: true
+    #     run: |
+    #       python ./scripts/cost-calculator.py || echo "Calculating cost failed"
 
-    #Send slack message if approval_state == denied
-      - name: Send denied slack message
-        if: env.APPROVAL_STATE == 'Denied'
-        run: ./scripts/aks/send-slack-message.sh
-        env:
-          SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          CHANGE_JIRA_ID: ${{ env.CHANGE_JIRA_ID }}
-          REQUEST_URL: ${{ env.REQUEST_URL }}
-          BUSINESS_AREA_ENTRY: ${{ env.BUSINESS_AREA_ENTRY }}
-          START_DATE: ${{ env.START_DATE }}
-          END_DATE: ${{ env.END_DATE }}
-          COST_DETAILS_FORMATTED: ${{ env.COST_DETAILS_FORMATTED }}
-          ENVIRONMENT: ${{ env.ENVIRONMENT }}
-          REQUESTER: ${{ github.event.issue.user.login }}
-          APPROVAL_COMMENT: ${{ env.APPROVAL_COMMENT }}
+    # #Send slack message if approval_state == denied
+    #   - name: Send denied slack message
+    #     if: env.APPROVAL_STATE == 'Denied'
+    #     run: ./scripts/aks/send-slack-message.sh
+    #     env:
+    #       SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
+    #       ISSUE_TITLE: ${{ github.event.issue.title }}
+    #       CHANGE_JIRA_ID: ${{ env.CHANGE_JIRA_ID }}
+    #       REQUEST_URL: ${{ env.REQUEST_URL }}
+    #       BUSINESS_AREA_ENTRY: ${{ env.BUSINESS_AREA_ENTRY }}
+    #       START_DATE: ${{ env.START_DATE }}
+    #       END_DATE: ${{ env.END_DATE }}
+    #       COST_DETAILS_FORMATTED: ${{ env.COST_DETAILS_FORMATTED }}
+    #       ENVIRONMENT: ${{ env.ENVIRONMENT }}
+    #       REQUESTER: ${{ github.event.issue.user.login }}
+    #       APPROVAL_COMMENT: ${{ env.APPROVAL_COMMENT }}
 
     #End workflow if approval state == denied
       - name: exit flow if denied
@@ -240,7 +240,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: cost error
+          label: 'cost error'
           token: ${{ env.GH_TOKEN }}
 
     #Set approval_state environment var to auto-approved if cost value is less than £5,000
@@ -254,7 +254,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: auto-approved
+          label: 'auto-approved'
           token: ${{ env.GH_TOKEN }}
 
     #Add auto-approval comment if approval_state == auto-approved
@@ -270,7 +270,9 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: pending approval,very high cost
+          label: |
+            "pending approval"
+            "very high cost"
           token: ${{ env.GH_TOKEN }}
 
     #If approval_state == Pending Approval && workflow is running at submission time, not approval time.
