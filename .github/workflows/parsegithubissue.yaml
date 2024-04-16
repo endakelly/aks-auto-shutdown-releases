@@ -64,10 +64,11 @@ jobs:
           # Exit the workflow
           exit 0
         
-      - name: Add label processing
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          LABELS: processing
+      - uses: octo-org/example-repo/.github/workflows/reusable-workflow.yml@main
+        with:
+          config-path: .github/reusable-workflows/add-label.yaml
+          issue: ${{ github.event.issue.number }}
+          label: 'processing'
 
     #Comment if approver is equal to requester
       - name: Cannot self approve comment
