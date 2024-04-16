@@ -157,7 +157,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: \"error in form\"
+          label: "error in form"
           token: ${{ env.GH_TOKEN }}
 
     # Provide any error messages to user as a comment
