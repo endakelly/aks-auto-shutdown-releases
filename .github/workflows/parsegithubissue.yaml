@@ -53,7 +53,7 @@ jobs:
           # Exit the workflow
           exit 0
         
-      - uses: .github/reusable-workflows/add-label.yaml
+      - uses: ./.github/reusable-workflows/add-label.yaml
         with:
           issue: ${{ github.event.issue.number }}
           label: 'processing'
