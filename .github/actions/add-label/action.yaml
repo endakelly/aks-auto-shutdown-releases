@@ -11,6 +11,7 @@ runs:
   steps:
     - name: Add label $LABEL
       run: gh issue edit "$NUMBER" --add-label "$LABEL"
+      shell: bash
       env:
         LABELS: ${{ inputs.label }}
         NUMBER: ${{ inputs.issue }}
