@@ -6,14 +6,17 @@ inputs:
   label:
     required: true
     type: string
+  repo:
+    required: true
+    type: string
 runs:
   using: composite
   steps:
     - name: Add label $LABEL
-      run: gh issue edit "$NUMBER" --add-label "$LABEL"
+      run: gh issue edit --repo "$REPO" "$NUMBER" --add-label "$LABEL"
       shell: bash
       env:
         LABELS: ${{ inputs.label }}
         NUMBER: ${{ inputs.issue }}
-        GH_TOKEN: ${{ env.GH_TOKEN }}      
+        REPO: ${{ inputs.repo }}        
         
