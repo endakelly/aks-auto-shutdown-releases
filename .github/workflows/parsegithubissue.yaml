@@ -63,7 +63,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: processing, bug
+          label: processing,bug
           token: ${{ env.GH_TOKEN }}
 
     #Comment if approver is equal to requester

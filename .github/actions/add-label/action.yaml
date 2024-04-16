@@ -14,10 +14,12 @@ runs:
   steps:
     - name: Add label $LABEL
       run: |
-        gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
+        for LABEL in $LABELS; do
+          gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
+        done
       shell: bash
       env:
-        LABEL: ${{ inputs.label }}
+        LABELS: ${{ inputs.label }}
         NUMBER: ${{ inputs.issue }}
         GH_TOKEN: ${{ inputs.token }}
         
