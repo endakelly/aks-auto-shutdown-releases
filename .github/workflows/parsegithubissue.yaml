@@ -64,6 +64,7 @@ jobs:
         with:
           issue: ${{ github.event.issue.number }}
           label: 'processing'
+          token: ${{ env.GH_TOKEN }}
 
     #Comment if approver is equal to requester
       - name: Cannot self approve comment

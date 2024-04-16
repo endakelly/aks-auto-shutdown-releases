@@ -6,6 +6,9 @@ inputs:
   label:
     required: true
     type: string
+  token:
+    required: false
+    type: string
 runs:
   using: composite
   steps:
@@ -14,5 +17,6 @@ runs:
       shell: bash
       env:
         LABELS: ${{ inputs.label }}
-        NUMBER: ${{ inputs.issue }}      
+        NUMBER: ${{ inputs.issue }}
+        GH_TOKEN: ${{ input.token }} 
         
