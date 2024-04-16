@@ -1,0 +1,17 @@
+name: Add Label
+inputs:
+  issue:
+    required: true
+    type: string
+  label:
+    required: true
+    type: string
+runs:
+  using: composite
+  steps:
+    - name: Add label $LABEL
+      run: gh issue edit "$NUMBER" --add-label "$LABEL"
+      env:
+        LABELS: ${{ inputs.label }}
+        NUMBER: ${{ inputs.issue }}
+        

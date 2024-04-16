@@ -60,7 +60,7 @@ jobs:
           fetch-depth: '0'
           token: ${{ env.GH_TOKEN }}
 
-      - uses: ./.github/workflows/add-label
+      - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
           label: 'processing'
