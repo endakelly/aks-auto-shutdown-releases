@@ -31,7 +31,7 @@ jobs:
 
       - name: test gh cli
         run: |
-          echo "AUTHOR=$(gh issue view --repo endakelly/aks-auto-shutdown-releases 4 --json author | jq -r '.author.login')"
+          echo "AUTHOR=$(gh issue view --repo endakelly/aks-auto-shutdown-releases 4 --json author | jq -r '.author.login')" >> $GITHUB_ENV
           echo "author is $AUTHOR"
     
       - name: Check if pull request is linked
