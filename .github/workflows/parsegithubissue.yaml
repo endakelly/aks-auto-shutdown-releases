@@ -64,9 +64,8 @@ jobs:
           # Exit the workflow
           exit 0
         
-      - uses: octo-org/example-repo/.github/workflows/reusable-workflow.yml@main
+      - uses: .github/reusable-workflows/add-label.yaml
         with:
-          config-path: .github/reusable-workflows/add-label.yaml
           issue: ${{ github.event.issue.number }}
           label: 'processing'
 
