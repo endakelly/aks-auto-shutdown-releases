@@ -13,10 +13,12 @@ runs:
   using: composite
   steps:
     - name: Add label $LABEL
-      run: gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
+      run: |
+        echo "Label is $LABEL"
+        gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
       shell: bash
       env:
         LABELS: ${{ inputs.label }}
         NUMBER: ${{ inputs.issue }}
-        GH_TOKEN: ${{ inputs.token }} 
+        GH_TOKEN: ${{ inputs.token }}
         
