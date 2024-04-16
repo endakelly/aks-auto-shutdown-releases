@@ -7,6 +7,11 @@ on:
       - edited
       - labeled
   pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
   workflow_dispatch:
 env:
   GH_TOKEN: ${{ secrets.PLATFORM_USER_TOKEN }}
@@ -15,7 +20,6 @@ env:
   APPROVAL_COMMENT: "Pending Approval"
   SLACK_TOKEN: ${{ secrets.AUTO_SHUTDOWN_OAUTH_TOKEN }}
   GH_REPO: ${{ github.repository }}
-  NUMBER: ${{ github.event.issue.number }}
 permissions:
   id-token: write
 jobs:
@@ -24,26 +28,42 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
+    
       - name: Check if pull request is linked
         id: check_if_linked
         if: github.event.issue.number == ''
         run: |
           echo "NUMBER=$(gh api graphql -F query='query {repository(owner: "endakelly", name: "aks-auto-shutdown-releases") {pullRequest(number: ${{ github.event.pull_request.number }}) {closingIssuesReferences(first: 1) {nodes {number}}}}}' | jq -r '.data.repository.pullRequest.closingIssuesReferences.nodes[].number')" >> $GITHUB_ENV
 
+      - name: Check if this is just an issue
+        id: check_if_issue
+        if: github.event.issue.number != ''
+        run: |
+          echo "NUMBER=${{ github.event.issue.number }}" >> $GITHUB_ENV
+
       - name: Check the number
         run: echo "The number is $NUMBER"
         
-      - name: Add label processing
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          LABELS: processing
+     #Check if the "cancel" label is added
+      - name: Check for cancel label
+        if: contains(github.event.issue.labels.*.name, 'cancel') && github.event.action == 'labeled'
+        run: |
+          # Logic to remove entry from issues_list.json
+          python ./scripts/remove_entry.py $NUMBER
+          # Exit the workflow
+          exit 0
+        
+      - uses: .github/reusable-workflows/add-label.yaml
+        with:
+          issue: ${{ github.event.issue.number }}
+          label: 'processing'
 
     #Comment if approver is equal to requester
       - name: Cannot self approve comment
         if: contains(github.event.issue.labels.*.name, 'approved') && github.event.issue.user.login == github.actor || contains(github.event.issue.labels.*.name, 'auto-approved') && github.event.issue.user.login == github.actor
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           body: |
             Requester cannot also be approver - please seek a second approver.
 
@@ -66,7 +86,7 @@ jobs:
         if: env.APPROVAL_STATE == 'Denied'
         uses: peter-evans/close-issue@v3
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           comment: | 
             Your request has been denied by ${{ github.actor }}, most likely due to associated costs being too high.
             Closing issue.
@@ -97,7 +117,7 @@ jobs:
         id: parse_issue
         uses: onmax/issue-form-parser@v1.4
         with:
-          issue_number: ${{ github.event.issue.number }}
+          issue_number: ${{ env.NUMBER }}
 
     #Save parsed date into environment variables  
       - name: Save parsed payload data
@@ -107,7 +127,7 @@ jobs:
           echo '${{ steps.parse_issue.outputs.payload }}'
           echo NEW_DATA='${{ steps.parse_issue.outputs.payload }}' >> $GITHUB_ENV
           echo GITHUB_REPO='${{ github.repository }}' >> $GITHUB_ENV
-          echo ISSUE_NUMBER='${{ github.event.issue.number }}' >> $GITHUB_ENV
+          echo ISSUE_NUMBER=$NUMBER >> $GITHUB_ENV
 
     #Setup Python
       - uses: actions/setup-python@v5
@@ -144,7 +164,7 @@ jobs:
         if: env.PROCESS_SUCCESS != 'true'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           body: |
             ${{ env.ISSUE_COMMENT }}
             Please edit this issue and select "Update comment" to resubmit.
@@ -202,7 +222,7 @@ jobs:
         if: env.PROCESS_SUCCESS == 'true' && env.ERROR_IN_COSTS != 'true'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           body: |
             Total estimated cost of skipping shutdown for the provided dates is **£${{ env.COST_DETAILS_FORMATTED }}**
 
@@ -211,7 +231,7 @@ jobs:
         if: env.PROCESS_SUCCESS == 'true' && env.ERROR_IN_COSTS == 'true'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           body: |
             We have been unable to estimate the cost of this skip request.
 
@@ -241,7 +261,7 @@ jobs:
         if: env.APPROVAL_STATE == 'auto-approved'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           body: |
             You request has been automatically approved.
 
@@ -257,7 +277,7 @@ jobs:
         if: env.APPROVAL_STATE == 'Pending Approval' && github.event.issue.user.login == github.actor
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           body: |
             Due to the level of cost associated with this request, an approval will be required from any additional person. Note, you cannot approve your own request.
 
@@ -281,7 +301,7 @@ jobs:
         if: env.APPROVAL_STATE == 'Approved'
         uses: peter-evans/create-or-update-comment@v4.0.0
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           body: |
             ${{ env.APPROVAL_COMMENT }}
 
@@ -292,7 +312,7 @@ jobs:
           git config user.name hmcts-platform-operations
           git config user.email github-platform-operations@hmcts.net
           git add .
-          git commit -m parseissue-${{ github.event.issue.number }}
+          git commit -m parseissue-$NUMBER
           git push
           commit_tree_url=$(gh browse -c -n)
           commit_url=${commit_tree_url/tree/commit}
@@ -316,7 +336,7 @@ jobs:
         if: env.PROCESS_SUCCESS == 'true' && env.APPROVAL_STATE == 'Approved' || env.PROCESS_SUCCESS == 'true' && env.APPROVAL_STATE == 'auto-approved'
         uses: peter-evans/close-issue@v3
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.NUMBER }}
           comment: | 
             Success! Your [commit](${{ env.COMMIT_URL }}) has been added to the json exclusions file.
             Auto-closing issue.
