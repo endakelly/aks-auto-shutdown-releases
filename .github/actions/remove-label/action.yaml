@@ -1,4 +1,4 @@
-name: Add Label
+name: Remove Label
 inputs:
   issue:
     required: true
@@ -12,9 +12,9 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Add label $LABEL
+    - name: Remove label $LABEL
       run: |
-        gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
+        gh issue edit --repo $GH_REPO $NUMBER --remove-label $LABEL
       shell: bash
       env:
         LABEL: ${{ inputs.label }}

@@ -28,14 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
-
-      - name: test gh cli
-        run: |
-          echo "AUTHOR=$(gh issue view --repo endakelly/aks-auto-shutdown-releases 4 --json author | jq -r '.author.login')" >> $GITHUB_ENV
-
-      - name: test gh cli output
-        run: |
-          echo "author is $AUTHOR"
     
       - name: Check if pull request is linked
         id: check_if_linked
@@ -71,7 +63,7 @@ jobs:
       - uses: ./.github/actions/add-label
         with:
           issue: ${{ github.event.issue.number }}
-          label: processing
+          label: processing, bug
           token: ${{ env.GH_TOKEN }}
 
     #Comment if approver is equal to requester
@@ -162,11 +154,11 @@ jobs:
           LABELS: error in form
 
     # Add form error label if process_success not equal to true
-      - name: Add error label
-        if: env.PROCESS_SUCCESS != 'true'
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          LABELS: error in form
+      - uses: ./.github/actions/add-label
+        with:
+          issue: ${{ github.event.issue.number }}
+          label: error in form
+          token: ${{ env.GH_TOKEN }}
 
     # Provide any error messages to user as a comment
       - name: Create Issue Comment
@@ -245,11 +237,11 @@ jobs:
             We have been unable to estimate the cost of this skip request.
 
       #If cost calculator finds an error, add cost error label
-      - name: Add costs error label
-        if: env.ERROR_IN_COSTS == 'true'
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          LABELS: cost error
+      - uses: ./.github/actions/add-label
+        with:
+          issue: ${{ github.event.issue.number }}
+          label: cost error
+          token: ${{ env.GH_TOKEN }}
 
     #Set approval_state environment var to auto-approved if cost value is less than £5,000
       - name: set approved status
@@ -259,11 +251,11 @@ jobs:
           echo "APPROVAL_COMMENT=Auto approved" >> $GITHUB_ENV
 
     #Add auto approved label if approval_state == auto-approved
-      - name: Add auto-approved label
-        if: env.APPROVAL_STATE == 'auto-approved'
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          LABELS: auto-approved
+      - uses: ./.github/actions/add-label
+        with:
+          issue: ${{ github.event.issue.number }}
+          label: auto-approved
+          token: ${{ env.GH_TOKEN }}
 
     #Add auto-approval comment if approval_state == auto-approved
       - name: Add auto approval comment
@@ -275,11 +267,11 @@ jobs:
             You request has been automatically approved.
 
     #If approval_state == Pending Approval add appropriate labels
-      - name: Add very high cost label
-        if: env.APPROVAL_STATE == 'Pending Approval'
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          LABELS: pending approval,very high cost
+      - uses: ./.github/actions/add-label
+        with:
+          issue: ${{ github.event.issue.number }}
+          label: pending approval,very high cost
+          token: ${{ env.GH_TOKEN }}
 
     #If approval_state == Pending Approval && workflow is running at submission time, not approval time.
       - name: Very High Cost approval comment
