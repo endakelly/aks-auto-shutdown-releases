@@ -17,7 +17,7 @@ runs:
         echo "Labels are $LABELS"
         for LABEL in "${LABELS[@]}"; do
           echo "Label is $LABEL"
-          gh issue edit --repo $GH_REPO $NUMBER --add-label $LABEL
+          gh issue edit --repo $GH_REPO $NUMBER --add-label "$LABEL"
         done
       shell: bash
       env:
