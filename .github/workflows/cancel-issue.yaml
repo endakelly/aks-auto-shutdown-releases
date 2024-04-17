@@ -28,7 +28,7 @@ jobs:
       - name: Check if this is just an issue
         id: check_if_issue
         run: |
-          echo "NUMBER=${{ inputs.number }}" | >> $GITHUB_ENV
+          echo "NUMBER=${{ github.event.issue.number }}" | >> $GITHUB_ENV
 
       - name: Check the number
         run: echo "The number is $NUMBER"
