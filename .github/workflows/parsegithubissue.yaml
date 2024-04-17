@@ -20,18 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.user.login != 'renovate[bot]'
     steps:
-    
-      - name: Check if pull request is linked
-        id: check_if_linked
-        if: github.event.issue.number == ''
-        run: |
-          echo "NUMBER=$(gh api graphql -F query='query {repository(owner: "endakelly", name: "aks-auto-shutdown-releases") {pullRequest(number: ${{ github.event.pull_request.number }}) {closingIssuesReferences(first: 1) {nodes {number}}}}}' | jq -r '.data.repository.pullRequest.closingIssuesReferences.nodes[].number')" >> $GITHUB_ENV
-
       - name: Check if this is just an issue
         id: check_if_issue
-        if: github.event.issue.number != ''
         run: |
-          # echo "NUMBER=${{ github.event.issue.number }}" >> $GITHUB_ENV
           echo "NUMBER=${{ inputs.number }}" | >> $GITHUB_ENV
 
       - name: Check the number
