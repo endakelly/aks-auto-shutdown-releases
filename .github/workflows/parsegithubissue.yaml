@@ -46,7 +46,7 @@ jobs:
       - name: Check for cancel label
         run: |
           # Logic to remove entry from issues_list.json
-          python ./scripts/remove_entry.py $NUMBER
+          python ./scripts/remove_entry.py ${{ inputs.number }}
           # Exit the workflow
           exit 0
 
