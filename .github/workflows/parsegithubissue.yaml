@@ -5,6 +5,11 @@ on:
     inputs:
       number:
         type: string
+  issues:
+    types:
+      - opened
+      - edited
+      - labeled
 env:
   GH_TOKEN: ${{ secrets.PLATFORM_USER_TOKEN }}
   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
