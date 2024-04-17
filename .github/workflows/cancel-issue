@@ -1,0 +1,49 @@
+name: Cancel issue
+run-name: My PR run
+on:
+  workflow_dispatch:
+    inputs:
+      number:
+        type: string
+  issues:
+    types:
+      - opened
+      - edited
+      - labeled
+env:
+  GH_TOKEN: ${{ secrets.PLATFORM_USER_TOKEN }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  APPROVAL_STATE: "Pending Approval"
+  APPROVAL_COMMENT: "Pending Approval"
+  SLACK_TOKEN: ${{ secrets.AUTO_SHUTDOWN_OAUTH_TOKEN }}
+  GH_REPO: ${{ github.repository }}
+permissions:
+  id-token: write
+jobs:
+  process-request:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    if: github.event.issue.user.login != 'renovate[bot]' || contains(github.event.issue.labels.*.name, 'cancel')
+    steps:
+      - name: Check if this is just an issue
+        id: check_if_issue
+        run: |
+          echo "NUMBER=${{ inputs.number }}" | >> $GITHUB_ENV
+
+      - name: Check the number
+        run: echo "The number is $NUMBER"
+         
+     #Allows workflow to access repo
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+          token: ${{ env.GH_TOKEN }}
+          
+     #Check if the "cancel" label is added
+      - name: Check for cancel label
+        run: |
+          # Logic to remove entry from issues_list.json
+          python ./scripts/remove_entry.py ${{ inputs.number }}
+          # Exit the workflow
+          exit 0
