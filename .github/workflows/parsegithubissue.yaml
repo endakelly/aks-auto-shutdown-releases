@@ -2,6 +2,9 @@ name: Auto Parse github form
 run-name: My PR run
 on:
   workflow_dispatch:
+    inputs:
+      number:
+        type: string
 env:
   GH_TOKEN: ${{ secrets.PLATFORM_USER_TOKEN }}
   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -28,7 +31,8 @@ jobs:
         id: check_if_issue
         if: github.event.issue.number != ''
         run: |
-          echo "NUMBER=${{ github.event.issue.number }}" >> $GITHUB_ENV
+          # echo "NUMBER=${{ github.event.issue.number }}" >> $GITHUB_ENV
+          echo "NUMBER=${{ inputs.number }}" | >> $GITHUB_ENV
 
       - name: Check the number
         run: echo "The number is $NUMBER"
