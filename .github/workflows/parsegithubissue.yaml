@@ -1,17 +1,6 @@
 name: Auto Parse github form
 run-name: My PR run
 on:
-  issues:
-    types:
-      - opened
-      - edited
-      - labeled
-  pull_request:
-    types:
-      - opened
-      - edited
-      - synchronize
-      - labeled
   workflow_dispatch:
 env:
   GH_TOKEN: ${{ secrets.PLATFORM_USER_TOKEN }}
