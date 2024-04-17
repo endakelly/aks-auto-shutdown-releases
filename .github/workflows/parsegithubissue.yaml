@@ -28,25 +28,11 @@ jobs:
       - name: Check if this is just an issue
         id: check_if_issue
         run: |
-          echo "NUMBER=${{ inputs.number }}" | >> $GITHUB_ENV
+          echo "NUMBER=${{ github.event.issue.number }}" | >> $GITHUB_ENV
 
       - name: Check the number
         run: echo "The number is $NUMBER"
          
-     #Allows workflow to access repo
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: '0'
-          token: ${{ env.GH_TOKEN }}
-          
-     #Check if the "cancel" label is added
-      - name: Check for cancel label
-        run: |
-          # Logic to remove entry from issues_list.json
-          python ./scripts/remove_entry.py ${{ github.event.issue.number }}
-          # Exit the workflow
-          exit 0
 
       - uses: ./.github/actions/add-label
         with:
