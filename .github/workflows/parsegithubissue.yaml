@@ -44,6 +44,13 @@ jobs:
       - name: Check the number
         run: echo "The number is $NUMBER"
         
+      - name: Exit early with success
+        if: env.NUMBER != ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setSucceeded()
+        
      #Check if the "cancel" label is added
       - name: Check for cancel label
         if: contains(github.event.issue.labels.*.name, 'cancel') && github.event.action == 'labeled'
